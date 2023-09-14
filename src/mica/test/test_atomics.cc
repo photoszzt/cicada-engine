@@ -6,6 +6,9 @@
 #include "mica/util/barrier.h"
 #include "mica/util/memcpy.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wvolatile"
+
 enum class OpsType {
   kRAW = 0,
   kRAWF,
@@ -487,3 +490,4 @@ int main(int argc, const char* argv[]) {
 
   return EXIT_SUCCESS;
 }
+#pragma GCC diagnostic pop

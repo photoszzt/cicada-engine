@@ -18,6 +18,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+
 /* default: SipHash-2-4 */
 #define cROUNDS 2
 #define dROUNDS 4
@@ -163,3 +166,4 @@ int siphash(uint8_t *out, const uint8_t *in, uint64_t inlen, const uint8_t *k) {
   return 0;
 }
 
+#pragma GCC diagnostic pop

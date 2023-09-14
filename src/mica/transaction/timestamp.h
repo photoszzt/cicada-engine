@@ -6,6 +6,9 @@
 #include "mica/common.h"
 #include "mica/util/barrier.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wvolatile"
+
 namespace mica {
 namespace transaction {
 struct CompactTimestamp {
@@ -303,5 +306,6 @@ struct CentralizedConcurrentTimestamp {
 };
 }
 }
+#pragma GCC diagnostic pop
 
 #endif

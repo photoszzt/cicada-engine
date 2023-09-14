@@ -15,12 +15,17 @@
 #ifndef RAPIDJSON_WRITER_H_
 #define RAPIDJSON_WRITER_H_
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winline"
+
 #include "rapidjson.h"
 #include "internal/stack.h"
 #include "internal/strfunc.h"
 #include "internal/dtoa.h"
 #include "internal/itoa.h"
 #include "stringbuffer.h"
+
+#pragma GCC diagnostic pop
 #include <new>      // placement new
 
 #if RAPIDJSON_HAS_STDSTRING
@@ -61,7 +66,7 @@ public:
         \param levelDepth Initial capacity of stack.
     */
     explicit
-    Writer(OutputStream& os, StackAllocator* stackAllocator = 0, size_t levelDepth = kDefaultLevelDepth) : 
+    Writer(OutputStream& os, StackAllocator* stackAllocator = nullptr, size_t levelDepth = kDefaultLevelDepth) : 
         os_(&os), level_stack_(stackAllocator, levelDepth * sizeof(Level)), hasRoot_(false) {}
 
     explicit

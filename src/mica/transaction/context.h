@@ -13,6 +13,9 @@
 #include "mica/util/latency.h"
 // #include "mica/util/queue.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wvolatile"
+
 namespace mica {
 namespace transaction {
 template <class StaticConfig>
@@ -340,5 +343,7 @@ class Context {
 }
 
 #include "context_gc.h"
+
+#pragma GCC diagnostic pop
 
 #endif

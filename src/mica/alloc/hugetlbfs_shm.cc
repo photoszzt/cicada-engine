@@ -19,6 +19,9 @@
 #include "mica/util/lcore.h"
 #include "mica/util/safe_cast.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 namespace mica {
 namespace alloc {
 void HugeTLBFS_SHM::clean_files() {
@@ -997,5 +1000,7 @@ void HugeTLBFS_SHM::free_striped(void* ptr) {
 }
 }
 }
+
+#pragma GCC diagnostic pop
 
 #endif

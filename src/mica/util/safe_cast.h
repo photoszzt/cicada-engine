@@ -7,7 +7,10 @@
 #include <cstdio>
 #include "mica/common.h"
 #define NEEDS_NULLPTR_DEFINED 0
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #include "mica/util/SafeInt/SafeInt3_mod.hpp"
+#pragma GCC diagnostic pop
 #undef NEEDS_NULLPTR_DEFINED
 
 namespace mica {
