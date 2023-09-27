@@ -1,11 +1,13 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 PROJECT(MICA)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.21)
 
 
-SET(CMAKE_CXX_COMPILER g++-12)
-SET(CMAKE_C_LINK_EXECUTABLE g++-12)
-
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Release/Debug)")
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
 
 OPTION(DEBUG "Enable debugging" OFF)
@@ -15,50 +17,34 @@ OPTION(LTO "Use link time optimization" OFF)
 
 
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 
-
-ADD_DEFINITIONS(-std=c++23)
-
-ADD_DEFINITIONS(-Wall -Wextra)
-ADD_DEFINITIONS(-Wzero-as-null-pointer-constant)
-ADD_DEFINITIONS(-Wsign-conversion)
-ADD_DEFINITIONS(-Wconversion)
-# ADD_DEFINITIONS(-Winline)
-
-ADD_DEFINITIONS(-Wno-unused-function)
-
-ADD_DEFINITIONS(-march=native)
-ADD_DEFINITIONS(-pthread)
-
-ADD_DEFINITIONS(-g)
-
-
-
-IF(DEBUG)
-
-  MESSAGE(WARNING "Debugging is ENABLED (to disable, run `cmake .. -DDEBUG=OFF`). Performance will be low.")
-  ADD_DEFINITIONS(-Og)
-  # ADD_DEFINITIONS(-O0)
-
-ELSE(DEBUG)
-
-  MESSAGE(STATUS "Debugging is disabled (to enable, run `cmake .. -DDEBUG=ON`)")
-  ADD_DEFINITIONS(-DNDEBUG)
-  ADD_DEFINITIONS(-O3)
-  # ADD_DEFINITIONS(--param inline-unit-growth=200 --param large-function-growth=500)
-
-ENDIF(DEBUG)
+set(proj_compile_options
+    -Wall -Wextra -Wzero-as-null-pointer-constant
+    -Wsign-conversion -Wconversion
+    -Wno-unused-function -march=native
+    -pthread -g
+)
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    set(proj_compile_options ${proj_compile_options}
+        -Wno-unknown-warning-option
+        -Wno-expansion-to-defined
+        -Wno-unused-local-typedef
+    )
+endif()
 
 
 IF(LTO)
 
   MESSAGE(STATUS "Link time optimization is enabled (to disable, run `cmake .. -DLTO=OFF`)")
-  ADD_DEFINITIONS(-flto)
+  set(proj_compile_options ${proj_compile_options} -flto)
   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
 
 ELSE(LTO)
@@ -66,6 +52,7 @@ ELSE(LTO)
   MESSAGE(WARNING "Link time optimization is DISABLED (to enable, run `cmake .. -DLTO=ON`). Performance will be low.")
 
 ENDIF(LTO)
+add_compile_options(${proj_compile_options})
 
 
 # IF(AVX2)

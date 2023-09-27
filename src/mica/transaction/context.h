@@ -14,7 +14,9 @@
 // #include "mica/util/queue.h"
 
 #pragma GCC diagnostic push
+#pragma clang diagnostic push
 #pragma GCC diagnostic ignored "-Wvolatile"
+#pragma clang diagnostic ignored "-Wdeprecated-volatile"
 
 namespace mica {
 namespace transaction {
@@ -149,7 +151,7 @@ class Context {
     else if (tsc_diff > StaticConfig::kMaxClockIncrement)
       tsc_diff = StaticConfig::kMaxClockIncrement;
 
-    clock_ += static_cast<uint64_t>(tsc_diff);
+    clock_ = clock_ + static_cast<uint64_t>(tsc_diff);
     last_tsc_ = tsc;
   }
 
@@ -228,9 +230,9 @@ class Context {
         head->inlined_rv->data_size = static_cast<uint32_t>(data_size);
         return head->inlined_rv;
       } else if (head->inlined_rv->status == RowVersionStatus::kInvalid &&
-                 __sync_bool_compare_and_swap(&head->inlined_rv->status,
-                                              RowVersionStatus::kInvalid,
-                                              RowVersionStatus::kPending)) {
+                 __sync_bool_compare_and_swap((uint8_t*)&head->inlined_rv->status,
+                                              (uint8_t)RowVersionStatus::kInvalid,
+                                              (uint8_t)RowVersionStatus::kPending)) {
         // Acquire an inlined version by contesting it.
         assert(head->inlined_rv->is_inlined());
         head->inlined_rv->data_size = static_cast<uint32_t>(data_size);
@@ -238,9 +240,9 @@ class Context {
       } else if (StaticConfig::kInlineWithAltRow) {
         auto alt_head = tbl->alt_head(cf_id, row_id);
         if (alt_head->inlined_rv->status == RowVersionStatus::kInvalid &&
-            __sync_bool_compare_and_swap(&alt_head->inlined_rv->status,
-                                         RowVersionStatus::kInvalid,
-                                         RowVersionStatus::kPending)) {
+            __sync_bool_compare_and_swap((uint8_t*)(&alt_head->inlined_rv->status),
+                                         (uint8_t)RowVersionStatus::kInvalid,
+                                         (uint8_t)RowVersionStatus::kPending)) {
           // Acquire an inlined version at the alternative row by contesting it.
           assert(alt_head->inlined_rv->is_inlined());
           alt_head->inlined_rv->data_size = static_cast<uint32_t>(data_size);
@@ -345,5 +347,6 @@ class Context {
 #include "context_gc.h"
 
 #pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 
 #endif

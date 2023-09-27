@@ -7,7 +7,9 @@
 #include "mica/util/barrier.h"
 
 #pragma GCC diagnostic push
+#pragma clang diagnostic push
 #pragma GCC diagnostic ignored "-Wvolatile"
+#pragma GCC diagnostic ignored "-Wdeprecated-volatile"
 
 namespace mica {
 namespace transaction {
