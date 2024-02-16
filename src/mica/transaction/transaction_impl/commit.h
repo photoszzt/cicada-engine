@@ -504,11 +504,8 @@ void Transaction<StaticConfig>::backoff() {
                                                ctx_->backoff_rand_.next_f64());
 
   bool use_usleep = false;
-  uint64_t sleep_us;
-#ifndef NDEBUG
-  // Suppress a compiler warning.
-  sleep_us = 0;
-#endif
+  uint64_t sleep_us = 0;
+
   if (StaticConfig::kPairwiseSleeping) {
     uint64_t us = ctx_->db_->sw()->c_1_usec();
     sleep_us = (ready - now) / us;
