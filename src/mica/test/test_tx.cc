@@ -391,7 +391,7 @@ int main(int argc, const char* argv[]) {
 
   Alloc alloc(config.get("alloc"));
   auto page_pool_size = 24 * uint64_t(1073741824);
-  PagePool* page_pools[2];
+  offset_ptr<PagePool> page_pools[2];
   // if (num_threads == 1) {
   //   page_pools[0] = new PagePool(&alloc, page_pool_size, 0);
   //   page_pools[1] = nullptr;

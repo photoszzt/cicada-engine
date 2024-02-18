@@ -15,6 +15,9 @@
 #include "mica/transaction/logging.h"
 #include "mica/util/lcore.h"
 
+#include <boost/interprocess/offset_ptr.hpp>
+using namespace boost::interprocess;
+
 namespace mica {
 namespace transaction {
 struct BasicDBConfig {
