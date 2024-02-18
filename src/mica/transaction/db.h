@@ -176,15 +176,15 @@ class DB {
   typedef BTreeIndex<StaticConfig, false, std::pair<uint64_t, uint64_t>>
       BTreeIndexNonuniqueU64;
 
-  DB(PagePool<StaticConfig>** page_pools, Logger* logger, Stopwatch* sw,
+  DB(offset_ptr<PagePool<StaticConfig>>* page_pools, Logger* logger, Stopwatch* sw,
      uint16_t num_threads);
   ~DB();
 
   PagePool<StaticConfig>* page_pool(uint8_t numa_id) {
-    return page_pools_[numa_id];
+    return page_pools_[numa_id].get();
   }
   const PagePool<StaticConfig>* page_pool(uint8_t numa_id) const {
-    return page_pools_[numa_id];
+    return page_pools_[numa_id].get();
   }
 
   Logger* logger() { return logger_; }
@@ -304,7 +304,7 @@ class DB {
  private:
   friend class Table<StaticConfig>;
 
-  PagePool<StaticConfig>** page_pools_;
+  offset_ptr<offset_ptr<PagePool<StaticConfig>>> page_pools_;
   Logger* logger_;
   Stopwatch* sw_;
 

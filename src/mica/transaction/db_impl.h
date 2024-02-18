@@ -5,7 +5,7 @@
 namespace mica {
 namespace transaction {
 template <class StaticConfig>
-DB<StaticConfig>::DB(PagePool<StaticConfig>** page_pools, Logger* logger,
+DB<StaticConfig>::DB(offset_ptr<PagePool<StaticConfig>>* page_pools, Logger* logger,
                      Stopwatch* sw, uint16_t num_threads)
     : page_pools_(page_pools),
       logger_(logger),
@@ -32,7 +32,7 @@ DB<StaticConfig>::DB(PagePool<StaticConfig>** page_pools, Logger* logger,
 
   for (uint8_t numa_id = 0; numa_id < num_numa_; numa_id++)
     shared_row_version_pools_[numa_id] =
-        new SharedRowVersionPool<StaticConfig>(page_pools_[numa_id], numa_id);
+        new SharedRowVersionPool<StaticConfig>(page_pools_[numa_id].get(), numa_id);
 
   for (uint16_t thread_id = 0; thread_id < num_threads_; thread_id++) {
     auto pool = new RowVersionPool<StaticConfig>(ctxs_[thread_id],
